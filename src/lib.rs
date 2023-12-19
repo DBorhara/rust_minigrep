@@ -110,3 +110,54 @@ fn match_case(original: &str, replacment: &str) -> String {
         replacment.to_string()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn case_sensitive() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Duct tape.";
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
+    #[test]
+    fn case_insensitive() {
+        let query = "rUsT";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+
+        assert_eq!(
+            vec!["Rust:", "Trust me."],
+            search_case_insensitive(query, contents)
+        );
+    }
+
+    #[test]
+    fn replace() {
+        let query = "three";
+        let replacement = "3";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+
+        let expected = "\
+Rust:
+safe, fast, productive.
+Pick 3.
+Trust me.";
+
+        assert_eq!(
+            Ok(expected.to_string()),
+            search_and_replace(query, replacement, contents),
+        );
+    }
+}
